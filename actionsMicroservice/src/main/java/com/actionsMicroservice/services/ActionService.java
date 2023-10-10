@@ -19,20 +19,23 @@ public class ActionService {
     public Action createAction(ActionDTO data) {
         // Fields validations
         if (data.title() == null || data.title().isEmpty())
-            throw new ActionCreationException.RequiredField("título");
+            throw new ActionCreationException.RequiredField("title");
         else if (data.title().length() > 80)
             throw new ActionCreationException.TitleException();
 
         if (data.description() == null || data.description().isEmpty())
-            throw new ActionCreationException.RequiredField("descrição");
+            throw new ActionCreationException.RequiredField("description");
         else if (data.description().length() > 4096)
             throw new ActionCreationException.DescriptionException();
 
         if (data.image() == null || data.image().length == 0)
-            throw new ActionCreationException.RequiredField("imagem");
+            throw new ActionCreationException.RequiredField("image");
 
         if (data.formLink() == null || data.formLink().isEmpty())
             throw new ActionCreationException.RequiredField("formLink");
+
+        if (data.status() == null)
+            throw new ActionCreationException.RequiredField("status");
 
         Action newAction = new Action(data);
         this.saveAction(newAction);

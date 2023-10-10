@@ -1,4 +1,6 @@
 package com.actionsMicroservice.dtos;
 
-public record ActionDTO(long id, String title, String description, String formLink, byte[] image) {
+import com.actionsMicroservice.domain.action.ActionStatus;
+
+public record ActionDTO(String title, String description, String formLink, byte[] image, ActionStatus status) {
 }
