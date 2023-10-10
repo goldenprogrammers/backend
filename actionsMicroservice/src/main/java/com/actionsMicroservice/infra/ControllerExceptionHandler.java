@@ -20,11 +20,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ExceptionDTO> treatDuplicatedEntry(DataIntegrityViolationException exception) {
         String errorMessage = exception.getMessage();
-        String textResponse = "Erro de violação de integridade desconhecido";
+        String textResponse = "Erro de violação de integridade";
 
-        if (errorMessage.contains("ON PUBLIC.ACTIONS(")) {
-            // ON PUBLIC.ACTIONS( has 18 chars
-            int startIndex = errorMessage.indexOf("ON PUBLIC.ACTIONS(") + 18;
+        if (errorMessage.contains("Unique index or primary key violation")) {
+            int startIndex = errorMessage.indexOf("(") + 1;
             int endIndex = errorMessage.indexOf(" NULLS", startIndex);
             String field = errorMessage.substring(startIndex, endIndex);
             textResponse = "Erro de violação de integridade no campo: " + field;
