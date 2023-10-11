@@ -7,6 +7,9 @@ import com.actionsMicroservice.repositories.ActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Service
 public class ActionService {
     @Autowired
@@ -40,5 +43,14 @@ public class ActionService {
         Action newAction = new Action(data);
         this.saveAction(newAction);
         return newAction;
+    }
+
+    public Action getActionById(long id) {
+        Optional<Action> action = this.repository.findById(id);
+
+        if (action.isPresent())
+            return action.get();
+
+        throw new NoSuchElementException("Ação");
     }
 }

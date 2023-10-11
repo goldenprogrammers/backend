@@ -3,7 +3,6 @@ package com.actionsMicroservice.controllers;
 import com.actionsMicroservice.domain.action.Action;
 import com.actionsMicroservice.dtos.ActionDTO;
 import com.actionsMicroservice.dtos.ExceptionDTO;
-import com.actionsMicroservice.exceptions.ActionCreationException;
 import com.actionsMicroservice.services.ActionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,10 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 
@@ -61,5 +57,29 @@ public class ActionController {
     public ResponseEntity<Action> createAction(@RequestBody ActionDTO action) {
         Action newAction = actionService.createAction(action);
         return new ResponseEntity<>(newAction, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar ação pelo id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ação encontrada", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
+                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "404", description = "Ação não encontrada", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Ação não encontrada.\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Erro interno no servidor.\"}")
+                    })
+            })
+    })
+    public ResponseEntity<Action> getActionById(@PathVariable long id) {
+        Action newAction = actionService.getActionById(id);
+        return new ResponseEntity<>(newAction, HttpStatus.OK);
     }
 }

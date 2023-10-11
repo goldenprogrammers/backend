@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.NoSuchElementException;
+
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
@@ -31,6 +33,12 @@ public class ControllerExceptionHandler {
 
         ExceptionDTO response = new ExceptionDTO(textResponse);
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public  ResponseEntity<ExceptionDTO> handleNotFound(NoSuchElementException exception) {
+        ExceptionDTO response = new ExceptionDTO(exception.getMessage() + " não encontrada.");
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(Exception.class)
