@@ -10,19 +10,24 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @SpringBootTest
 public class ActionServiceTests {
     @Mock
-    private ActionRepository actionRepository;
+    private ActionRepository mockRepository;
     @InjectMocks
     private ActionService actionService;
 
     @Test
     public void createAction() {
-        ActionDTO actionDTO = new ActionDTO("título", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.valueOf("active"));
+        ActionDTO actionDTO = new ActionDTO("título", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active);
         Action action = new Action(actionDTO);
+        Mockito.when(mockRepository.save(action)).thenReturn(action);
         Assertions.assertEquals(action, actionService.createAction(actionDTO));
     }
 
@@ -65,5 +70,18 @@ public class ActionServiceTests {
     public void statusValidation() {
         ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "www.google.com.br", new byte[] { 12 }, null);
         Assertions.assertThrows(ActionCreationException.RequiredField.class, () -> actionService.createAction(actionDTO));
+    }
+
+    @Test
+    public void findById() {
+        Action action = new Action((long) 1, "título", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active);
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(action));
+        Assertions.assertEquals(action, actionService.getActionById(1));
+    }
+
+    @Test
+    public void findByIdException() {
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.empty());
+        Assertions.assertThrows(NoSuchElementException.class, () -> actionService.getActionById(1));
     }
 }
