@@ -72,7 +72,7 @@ public class ActionService {
 
     public Page<Action> getActionByTitle(int page, int pageSize, Sort.Direction sort, String title) {
         PageRequest pagination = this.getPagination(page, pageSize, sort);
-        return this.repository.findByTitleContainingAndStatus(title, ActionStatus.active, pagination);
+        return this.repository.findByTitleContainingIgnoreCaseAndStatus(title, ActionStatus.active, pagination);
     }
 
     public PageRequest getPagination(int page, int pageSize, Sort.Direction sort) {
