@@ -1,10 +1,15 @@
 package com.actionsMicroservice.services;
 
 import com.actionsMicroservice.domain.action.Action;
+import com.actionsMicroservice.domain.action.ActionStatus;
 import com.actionsMicroservice.dtos.ActionDTO;
 import com.actionsMicroservice.exceptions.ActionCreationException;
 import com.actionsMicroservice.repositories.ActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -52,5 +57,34 @@ public class ActionService {
             return action.get();
 
         throw new NoSuchElementException("Ação");
+    }
+
+    public Page<Action> getActions(int page, int pageSize, Sort.Direction sort, ActionStatus status) {
+        Action filter = new Action();
+        filter.setTimestamp(null);
+        PageRequest pagination = this.getPagination(page, pageSize, sort);
+
+        if (status != null)
+            filter.setStatus(status);
+
+        return this.repository.findAll(Example.of(filter), pagination);
+    }
+
+    public Page<Action> getActionByTitle(int page, int pageSize, Sort.Direction sort, String title) {
+        PageRequest pagination = this.getPagination(page, pageSize, sort);
+        return this.repository.findByTitleContainingAndStatus(title, ActionStatus.active, pagination);
+    }
+
+    public PageRequest getPagination(int page, int pageSize, Sort.Direction sort) {
+        PageRequest pagination;
+
+        if (sort == null)
+            pagination = PageRequest.of(page, pageSize);
+        else {
+            Sort sortMethod = Sort.by(new Sort.Order(sort, "timestamp"));
+            pagination = PageRequest.of(page, pageSize, sortMethod);
+        }
+
+        return pagination;
     }
 }
