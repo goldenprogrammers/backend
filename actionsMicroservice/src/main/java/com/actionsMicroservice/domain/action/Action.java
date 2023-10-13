@@ -4,6 +4,8 @@ import com.actionsMicroservice.dtos.ActionDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Entity(name="actions")
 @Table(name="actions")
 @Getter
@@ -30,6 +32,9 @@ public class Action {
 
     @Enumerated(EnumType.STRING)
     private ActionStatus status;
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private Instant timestamp = Instant.now();
 
     public Action(ActionDTO data) {
         this.title = data.title();
