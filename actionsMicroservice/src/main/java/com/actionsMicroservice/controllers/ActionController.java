@@ -148,7 +148,7 @@ public class ActionController {
                     })
             })
     })
-    public ResponseEntity<GetWithPaginationDTO> getActionsByTitle(
+    public ResponseEntity<GetWithPaginationDTO> getActionsByParcialTitle(
             @Parameter(description = "Quantidade de ações retornadar por página", example = "1", content = {
                     @Content(mediaType = "number", schema = @Schema(implementation = Number.class))
             })
