@@ -95,7 +95,7 @@ public class ActionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso retornando pelo menos uma ação", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
-                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}")
+                            @ExampleObject(value = "{\"data\": [{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}], \"totalPages\": 1, \"totalElements\": 1, \"pageNumber\": 1 }")
                     })
             }),
             @ApiResponse(responseCode = "204", description = "Busca realizada com sucesso, mas sem nenhum retorno", content = @Content),
@@ -137,8 +137,8 @@ public class ActionController {
     @Operation(summary = "Buscar todas as ações ativas que contem o termo da busca")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso retornando pelo menos uma ação", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
-                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}")
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = GetWithPaginationDTO.class), examples = {
+                            @ExampleObject(value = "{\"data\": [{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}], \"totalPages\": 1, \"totalElements\": 1, \"pageNumber\": 1 }")
                     })
             }),
             @ApiResponse(responseCode = "204", description = "Busca realizada com sucesso, mas sem nenhum retorno", content = @Content),
@@ -153,13 +153,13 @@ public class ActionController {
                     @Content(mediaType = "number", schema = @Schema(implementation = Number.class))
             })
             @RequestParam(required = false, defaultValue = "25") int pageSize,
-            @Parameter(description = "Página a ser retornada", example = "1", content = {
+            @Parameter(description = "Página a ser retornada", example = "25", content = {
                     @Content(mediaType = "number", schema = @Schema(implementation = Number.class))
             })
             @RequestParam(required = false, defaultValue = "1") int page,
             @Parameter(description = "Define se a ordenação pela data de criação será de maneira ascendente ou descendente")
             @RequestParam(required = false) Sort.Direction sort,
-            @Parameter(description = "Termo da busca")
+            @Parameter(description = "Termo da busca (não faz distinção entre letras maiúsculas e minúsculas)", example = "T")
             @RequestParam(required = false) String title
     ) {
         Page<Action> actions = actionService.getActionByTitle(page - 1, pageSize, sort, title);
