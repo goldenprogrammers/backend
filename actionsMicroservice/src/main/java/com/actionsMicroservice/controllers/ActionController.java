@@ -33,12 +33,12 @@ public class ActionController {
     @PostMapping
     @Operation(summary = "Criação de ações")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
-            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": [12, 43], \"status\": \"active\"}")
+            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": [12, 43], \"status\": \"active\", \"isDeleted\": \"false\"}")
     }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ação criada com sucesso", content =  {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
-                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}")
+                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\", \"isDeleted\": \"false\"}")
                     })
             }),
             @ApiResponse(responseCode = "400", description = "Validação dos campos", content = {
@@ -68,7 +68,7 @@ public class ActionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ação encontrada", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
-                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}")
+                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\", \"isDeleted\": \"false\"}")
                     })
             }),
             @ApiResponse(responseCode = "404", description = "Ação não encontrada", content = {
@@ -96,7 +96,7 @@ public class ActionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso retornando pelo menos uma ação", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
-                            @ExampleObject(value = "{\"data\": [{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}], \"totalPages\": 1, \"totalElements\": 1, \"pageNumber\": 1 }")
+                            @ExampleObject(value = "{\"data\": [{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\", \"isDeleted\": \"false\"}], \"totalPages\": 1, \"totalElements\": 1, \"pageNumber\": 1 }")
                     })
             }),
             @ApiResponse(responseCode = "204", description = "Busca realizada com sucesso, mas sem nenhum retorno", content = @Content),
@@ -139,7 +139,7 @@ public class ActionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso retornando pelo menos uma ação", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = GetWithPaginationDTO.class), examples = {
-                            @ExampleObject(value = "{\"data\": [{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}], \"totalPages\": 1, \"totalElements\": 1, \"pageNumber\": 1 }")
+                            @ExampleObject(value = "{\"data\": [{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\", \"isDeleted\": \"false\"}], \"totalPages\": 1, \"totalElements\": 1, \"pageNumber\": 1 }")
                     })
             }),
             @ApiResponse(responseCode = "204", description = "Busca realizada com sucesso, mas sem nenhum retorno", content = @Content),
