@@ -178,9 +178,25 @@ public class ActionController {
     }
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> deleteAction(@PathVariable Long id){
+    @Operation(summary = "Deletar ações")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Ação excluída com sucesso", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Ação não encontrada", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Ação não encontrada.\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Erro interno no servidor.\"}")
+                    })
+            })
+    })
+    public ResponseEntity<?> deleteAction(
+            @Parameter(description = "Id da ação que será excluída", example = "1", content = {
+                    @Content(mediaType = "number", schema = @Schema(implementation = Number.class))})
+            @PathVariable Long id){
         actionService.removeAction(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }
