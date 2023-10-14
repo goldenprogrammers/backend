@@ -108,4 +108,24 @@ public class ActionServiceTests {
         PageRequest pagination = PageRequest.of(1, 25, sortMethod);
         Assertions.assertEquals(pagination, actionService.getPagination(1, 25, Sort.Direction.DESC));
     }
+
+    @Test
+    public void UpdateAction() {
+        String title = "Novo titulo";
+        String description = "Nova descrisção";
+        String formLink = "www.formLink.com";
+
+        ActionDTO updateDTO = new ActionDTO(title, description, formLink, null, null);
+        Action existingAction = new Action(1L, "Título", "Descrição", "www.google.com", null, ActionStatus.active, Instant.now(), Boolean.FALSE);
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(existingAction));
+        // Executar a atualização
+        Action updatedAction = actionService.updateAction(1L, updateDTO);
+        Assertions.assertAll("Verificando Atualização de Ação",
+                () -> Assertions.assertEquals(existingAction.getTitle(), updatedAction.getTitle()),
+                () -> Assertions.assertEquals(existingAction.getDescription(), updatedAction.getDescription()),
+                () -> Assertions.assertEquals(existingAction.getFormLink(), updatedAction.getFormLink()),
+                () -> Assertions.assertEquals(existingAction.getImage(), updatedAction.getImage()),
+                () -> Assertions.assertEquals(existingAction.getStatus(), updatedAction.getStatus())
+        );
+    }
 }
