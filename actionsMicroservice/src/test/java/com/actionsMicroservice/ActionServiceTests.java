@@ -78,7 +78,7 @@ public class ActionServiceTests {
 
     @Test
     public void findById() {
-        Action action = new Action((long) 1, "título", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active, Instant.now());
+        Action action = new Action((long) 1, "título", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active, Instant.now(), Boolean.FALSE);
         Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(action));
         Assertions.assertEquals(action, actionService.getActionById(1));
     }
