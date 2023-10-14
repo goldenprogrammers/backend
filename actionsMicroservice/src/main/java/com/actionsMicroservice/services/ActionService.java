@@ -5,6 +5,7 @@ import com.actionsMicroservice.domain.action.ActionStatus;
 import com.actionsMicroservice.dtos.ActionDTO;
 import com.actionsMicroservice.exceptions.ActionCreationException;
 import com.actionsMicroservice.repositories.ActionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -53,7 +54,7 @@ public class ActionService {
     public Action getActionById(long id) {
         Optional<Action> action = this.repository.findById(id);
 
-        if (action.isPresent())
+        if (action.isPresent() && !action.get().getIsDeleted())
             return action.get();
 
         throw new NoSuchElementException("Ação");
@@ -62,6 +63,7 @@ public class ActionService {
     public Page<Action> getActions(int page, int pageSize, Sort.Direction sort, ActionStatus status) {
         Action filter = new Action();
         filter.setTimestamp(null);
+        filter.setIsDeleted(Boolean.FALSE);
         PageRequest pagination = this.getPagination(page, pageSize, sort);
 
         if (status != null)
@@ -72,7 +74,7 @@ public class ActionService {
 
     public Page<Action> getActionByTitle(int page, int pageSize, Sort.Direction sort, String title) {
         PageRequest pagination = this.getPagination(page, pageSize, sort);
-        return this.repository.findByTitleContainingIgnoreCaseAndStatus(title, ActionStatus.active, pagination);
+        return this.repository.findByTitleContainingIgnoreCaseAndStatusAndIsDeleted(title, ActionStatus.active, Boolean.FALSE ,pagination);
     }
 
     public PageRequest getPagination(int page, int pageSize, Sort.Direction sort) {
@@ -86,5 +88,10 @@ public class ActionService {
         }
 
         return pagination;
+    }
+
+    public void removeAction(long id){
+        Action action = getActionById(id);
+        action.setIsDeleted(Boolean.TRUE);
     }
 }
