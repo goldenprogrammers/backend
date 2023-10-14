@@ -94,4 +94,26 @@ public class ActionService {
         Action action = getActionById(id);
         action.setIsDeleted(Boolean.TRUE);
     }
+
+    public Action updateAction(Long id, ActionDTO updatedAction){
+        Action oldAction = getActionById(id);
+
+        if(updatedAction.title() != null){
+            oldAction.setTitle(updatedAction.title());
+        }
+        if(updatedAction.description() != null){
+            oldAction.setDescription(updatedAction.description());
+        }
+        if(updatedAction.formLink() != null){
+            oldAction.setFormLink(updatedAction.formLink());
+        }
+        if (updatedAction.image() != null){
+            oldAction.setImage(updatedAction.image());
+        }
+        if(updatedAction.status() != null){
+            oldAction.setStatus(updatedAction.status());
+        }
+        this.saveAction(oldAction);
+        return oldAction;
+    }
 }

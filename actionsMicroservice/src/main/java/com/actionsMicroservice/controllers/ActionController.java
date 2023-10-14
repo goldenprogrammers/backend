@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+
 @RestController
 @RequestMapping("/action")
 @Tag(name = "Ações", description = "Todos os endpoints de Ações")
@@ -198,5 +200,12 @@ public class ActionController {
             @PathVariable Long id){
         actionService.removeAction(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Action> updateAction(@PathVariable Long id, @RequestBody ActionDTO data){
+        Action updatedAction = actionService.updateAction(id, data);
+        return new ResponseEntity<>(updatedAction, HttpStatus.OK);
     }
 }
