@@ -35,7 +35,7 @@ public class ActionController {
     @PostMapping
     @Operation(summary = "Criação de ações")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
-            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": [12, 43], \"status\": \"active\", \"isDeleted\": \"false\"}")
+            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": [12, 43], \"status\": \"active\"}")
     }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ação criada com sucesso", content =  {
@@ -204,6 +204,27 @@ public class ActionController {
 
     @PatchMapping("/{id}")
     @Transactional
+    @Operation(summary = "Atualizar dados de uma ação")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
+            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": [12, 43], \"status\": \"active\"}")
+    }))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ação atualizada com sucesso", content =  {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
+                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\" , \"isDeleted\": \"false\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "404", description = "Ação não encontrada", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Ação não encontrada.\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Erro interno no servidor.\"}")
+                    })
+            })
+    })
     public ResponseEntity<Action> updateAction(@PathVariable Long id, @RequestBody ActionDTO data){
         Action updatedAction = actionService.updateAction(id, data);
         return new ResponseEntity<>(updatedAction, HttpStatus.OK);
