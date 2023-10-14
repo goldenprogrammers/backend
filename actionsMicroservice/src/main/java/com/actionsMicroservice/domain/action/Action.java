@@ -36,6 +36,9 @@ public class Action {
     @Column(columnDefinition = "TIMESTAMP")
     private Instant timestamp = Instant.now();
 
+    @Column(length = 10)
+    private Boolean isDeleted = Boolean.FALSE;
+
     public Action(ActionDTO data) {
         this.title = data.title();
         this.description = data.description();
