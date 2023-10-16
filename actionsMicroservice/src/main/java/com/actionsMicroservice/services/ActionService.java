@@ -5,7 +5,6 @@ import com.actionsMicroservice.domain.action.ActionStatus;
 import com.actionsMicroservice.dtos.ActionDTO;
 import com.actionsMicroservice.exceptions.ActionCreationException;
 import com.actionsMicroservice.repositories.ActionRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -93,5 +92,27 @@ public class ActionService {
     public void removeAction(long id){
         Action action = getActionById(id);
         action.setIsDeleted(Boolean.TRUE);
+    }
+
+    public Action updateAction(Long id, ActionDTO updatedAction){
+        Action oldAction = getActionById(id);
+
+        if(updatedAction.title() != null){
+            oldAction.setTitle(updatedAction.title());
+        }
+        if(updatedAction.description() != null){
+            oldAction.setDescription(updatedAction.description());
+        }
+        if(updatedAction.formLink() != null){
+            throw new UnsupportedOperationException("A atualização do campo 'formLink' não é permitida.");
+        }
+        if (updatedAction.image() != null){
+            oldAction.setImage(updatedAction.image());
+        }
+        if(updatedAction.status() != null){
+            oldAction.setStatus(updatedAction.status());
+        }
+        this.saveAction(oldAction);
+        return oldAction;
     }
 }

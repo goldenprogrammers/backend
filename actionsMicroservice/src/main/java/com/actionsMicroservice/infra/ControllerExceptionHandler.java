@@ -46,4 +46,10 @@ public class ControllerExceptionHandler {
         ExceptionDTO response = new ExceptionDTO("Erro interno no servidor.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<ExceptionDTO> handleUpdateException(Exception exception){
+        ExceptionDTO response = new ExceptionDTO((exception.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }
