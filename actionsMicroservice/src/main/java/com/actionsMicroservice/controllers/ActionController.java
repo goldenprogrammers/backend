@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.crypto.Data;
 
 @RestController
 @RequestMapping("/action")
@@ -206,7 +205,7 @@ public class ActionController {
     @Transactional
     @Operation(summary = "Atualizar dados de uma ação")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
-            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": [12, 43], \"status\": \"active\"}")
+            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"image\": [12, 43], \"status\": \"active\"}")
     }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ação atualizada com sucesso", content =  {

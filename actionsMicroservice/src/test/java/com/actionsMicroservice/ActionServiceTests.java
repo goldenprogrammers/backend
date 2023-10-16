@@ -113,9 +113,8 @@ public class ActionServiceTests {
     public void UpdateAction() {
         String title = "Novo titulo";
         String description = "Nova descrisção";
-        String formLink = "www.formLink.com";
 
-        ActionDTO updateDTO = new ActionDTO(title, description, formLink, null, null);
+        ActionDTO updateDTO = new ActionDTO(title, description, null, null, null);
         Action existingAction = new Action(1L, "Título", "Descrição", "www.google.com", null, ActionStatus.active, Instant.now(), Boolean.FALSE);
         Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(existingAction));
         // Executar a atualização
@@ -123,7 +122,6 @@ public class ActionServiceTests {
         Assertions.assertAll("Verificando Atualização de Ação",
                 () -> Assertions.assertEquals(existingAction.getTitle(), updatedAction.getTitle()),
                 () -> Assertions.assertEquals(existingAction.getDescription(), updatedAction.getDescription()),
-                () -> Assertions.assertEquals(existingAction.getFormLink(), updatedAction.getFormLink()),
                 () -> Assertions.assertEquals(existingAction.getImage(), updatedAction.getImage()),
                 () -> Assertions.assertEquals(existingAction.getStatus(), updatedAction.getStatus())
         );
