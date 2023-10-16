@@ -218,6 +218,11 @@ public class ActionController {
                             @ExampleObject(value = "{\"message\": \"Ação não encontrada.\"}")
                     })
             }),
+            @ApiResponse(responseCode = "400", description = "O campo não pode ser atualizado", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"A atualização do campo 'formLink' não é permitida.\"}")
+                    })
+            }),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
                             @ExampleObject(value = "{\"message\": \"Erro interno no servidor.\"}")
