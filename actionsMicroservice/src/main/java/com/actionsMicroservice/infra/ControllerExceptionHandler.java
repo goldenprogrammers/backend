@@ -38,7 +38,12 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public  ResponseEntity<ExceptionDTO> handleNotFound(NoSuchElementException exception) {
         ExceptionDTO response = new ExceptionDTO(exception.getMessage() + " não encontrada.");
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied(org.springframework.security.access.AccessDeniedException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
     }
 
     @ExceptionHandler(Exception.class)
