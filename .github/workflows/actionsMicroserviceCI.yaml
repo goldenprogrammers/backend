@@ -2,10 +2,10 @@ name: Action Microservice CI
 
 on:
   pull_request:
-    branches:
-      - 'development'
+    branches: [ development ]
+    types: [opened, synchronize]
     paths:
-      - ./actionsMicroservice
+      - 'actionsMicroservice/**'
 
 jobs:
   build:
