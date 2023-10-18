@@ -18,13 +18,14 @@ public class SecurityConfigurations {
     @Autowired
     private JWTConverter jwtConverter;
 
-    @Value("${ENABLE_AUTHENTICATION}")
+    @Value("${ENABLE_AUTHENTICATION:false}")
     private boolean enableAuthentication;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable);
+
         if (enableAuthentication) {
-            http.csrf(AbstractHttpConfigurer::disable);
             http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
             http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter)));
         }

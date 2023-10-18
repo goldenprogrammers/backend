@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Component
 public class JWTConverter implements Converter<Jwt, AbstractAuthenticationToken> {
-    @Value("${KEYCLOAK_CLIENT}")
+    @Value("${KEYCLOAK_CLIENT:pantanal-client}")
     private String keycloakClient;
 
     @Override
