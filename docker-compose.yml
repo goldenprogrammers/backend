@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  mysql-db:
+    image: mysql:latest
+    container_name: pantanalDEV
+    environment:
+      MYSQL_ROOT_PASSWORD: dev123
+      MYSQL_DATABASE: actionMicroService
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: dev123
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
