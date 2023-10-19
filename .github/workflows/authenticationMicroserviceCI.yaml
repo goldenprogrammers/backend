@@ -1,11 +1,11 @@
-name: Users Microservice CI
+name: Authentication Microservice CI
 
 on:
   pull_request:
     branches: [ development ]
     types: [opened, synchronize]
     paths:
-      - 'users-microservice/**'
+      - 'authentication-microservice/**'
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Install maven dependencies and run tests
-        run: cd ./users-microservice && mvn clean install
+        run: cd ./authentication-microservice && mvn clean install
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
@@ -43,4 +43,4 @@ jobs:
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: cd ./users-microservice && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN
+        run: cd ./authentication-microservice && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN
