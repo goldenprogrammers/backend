@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.inscriptionMicroservice</groupId>
-    <artifactId>inscriptionMicroservice</artifactId>
+    <artifactId>subscription-microservice</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>inscriptionMicroservice</name>
     <description>Project to resolve pantanal.dev backend module challenge</description>

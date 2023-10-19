@@ -1,12 +1,12 @@
-package com.inscriptionMicroservice;
+package com.subscriptionMicroservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InscriptionMicroserviceApplication {
+public class SubscriptionMicroserviceApplication {
 
     public static void main(String[] args){
-        SpringApplication.run(InscriptionMicroserviceApplication.class, args);
+        SpringApplication.run(SubscriptionMicroserviceApplication.class, args);
     }
 }
