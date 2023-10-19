@@ -3,6 +3,7 @@ package com.actionsMicroservice.controllers;
 import com.actionsMicroservice.domain.action.Action;
 import com.actionsMicroservice.domain.action.ActionStatus;
 import com.actionsMicroservice.dtos.ActionDTO;
+import com.actionsMicroservice.dtos.ActionStatusDTO;
 import com.actionsMicroservice.dtos.ExceptionDTO;
 import com.actionsMicroservice.dtos.GetWithPaginationDTO;
 import com.actionsMicroservice.services.ActionService;
@@ -232,5 +233,24 @@ public class ActionController {
     public ResponseEntity<Action> updateAction(@PathVariable Long id, @RequestBody ActionDTO data){
         Action updatedAction = actionService.updateAction(id, data);
         return new ResponseEntity<>(updatedAction, HttpStatus.OK);
+    }
+
+    @GetMapping("isactive/{id}")
+    @Operation(summary = "Verificar se a ação está ativa")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ação encontrada", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ActionStatusDTO.class), examples = {
+                            @ExampleObject(value = "{\"isActive\": \"true||false\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Erro interno no servidor.\"}")
+                    })
+            })
+    })
+    public ResponseEntity<ActionStatusDTO> isAnActiveAction(@PathVariable Long id){
+        ActionStatusDTO isActive = new ActionStatusDTO(actionService.activeAction(id));
+        return new ResponseEntity<>(isActive, HttpStatus.OK);
     }
 }

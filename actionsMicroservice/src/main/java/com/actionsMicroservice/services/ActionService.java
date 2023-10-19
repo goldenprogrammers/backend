@@ -115,4 +115,10 @@ public class ActionService {
         this.saveAction(oldAction);
         return oldAction;
     }
+
+    public Boolean activeAction(Long id){
+        Action action = this.getActionById(id);
+        if(action.getStatus() != ActionStatus.active) return Boolean.FALSE;
+        return Boolean.TRUE;
+    }
 }
