@@ -16,6 +16,14 @@ services:
     networks:
       - app-network
 
+  actionsmicroservice:
+    build:
+      context: ./actionsMicroservice
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    volumes:
+      - ./actionsMicroservice:/usr/src/app
 networks:
   app-network:
     driver: bridge
