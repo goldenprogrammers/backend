@@ -43,4 +43,4 @@ jobs:
             SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
             SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: cd ./actionsMicroservice && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+        run: cd ./actionsMicroservice && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$SONAR_PROJECT_KEY -Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN
