@@ -1,4 +1,4 @@
-package com.inscriptionMicroservice.controllers;
+package com.subscriptionMicroservice.controllers;
 
-public class InscriptionController {
+public class SubscriptionController {
 }
