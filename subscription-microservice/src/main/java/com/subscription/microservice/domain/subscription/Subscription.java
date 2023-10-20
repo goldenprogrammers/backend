@@ -1,7 +1,7 @@
 package com.subscription.microservice.domain.subscription;
 
 
-import com.subscription.microservice.dtos.SubscriptionDTO;
+import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Objects;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @IdClass(SubscriptionId.class)
 public class Subscription {
     @Id
-    private Long userId;
+    private String userId;
 
     @Id
     private Long actionId;
@@ -47,7 +47,7 @@ public class Subscription {
         return userId.equals(that.userId) && actionId.equals(that.actionId);
     }
 
-    public Subscription(SubscriptionDTO data){
+    public Subscription(SubscriptionIdDTO data){
         this.userId = data.userId();
         this.actionId = data.actionId();
     }
