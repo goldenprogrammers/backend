@@ -24,6 +24,6 @@ public class ActionCreationException extends RuntimeException {
     }
 
     public static class ImageSizeException extends ActionCreationException {
-        public ImageSizeException() { super("O tamanho da imagem deve ser inferior a 2MB."); }
+        public ImageSizeException() { super("O tamanho da imagem deve ser de no máximo 2MB."); }
     }
 }
