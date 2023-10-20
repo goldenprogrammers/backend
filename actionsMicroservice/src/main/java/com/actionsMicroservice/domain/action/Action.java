@@ -28,7 +28,7 @@ public class Action {
     private String description;
 
     @Lob
-    @Column(columnDefinition = "MEDIUMBLOB", length = 2097152)
+    @Column(columnDefinition = "MEDIUMBLOB", length = 2621440)
     private String image;
 
     @Enumerated(EnumType.STRING)
