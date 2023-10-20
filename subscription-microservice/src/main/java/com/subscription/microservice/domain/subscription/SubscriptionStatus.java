@@ -1,4 +1,4 @@
-package com.subscriptionMicroservice.domain.subscription;
+package com.subscription.microservice.domain.subscription;
 
 public enum SubscriptionStatus {
 

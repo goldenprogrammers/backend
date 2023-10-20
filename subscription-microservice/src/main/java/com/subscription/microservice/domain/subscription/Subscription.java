@@ -1,11 +1,11 @@
-package com.subscriptionMicroservice.domain.subscription;
+package com.subscription.microservice.domain.subscription;
 
 
+import com.subscription.microservice.dtos.SubscriptionDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Objects;
 
-//TODO: Add equal and hashCode
 
 @Entity(name="Subscription")
 @Table(name="Subscription")
@@ -22,13 +22,13 @@ public class Subscription {
     private Long actionId;
 
     @Column(length = 10)
-    private Boolean formReceived;
+    private Boolean formReceived = Boolean.FALSE;
 
     @Column(length = 10)
-    private Boolean formResponseApproved;
+    private Boolean formResponseApproved = Boolean.FALSE;
 
     @Enumerated(EnumType.STRING)
-    private SubscriptionId status;
+    private SubscriptionStatus status = SubscriptionStatus.IN_PROGRESS;
 
     @Override
     public int hashCode() {
@@ -47,6 +47,10 @@ public class Subscription {
         return userId.equals(that.userId) && actionId.equals(that.actionId);
     }
 
+    public Subscription(SubscriptionDTO data){
+        this.userId = data.userId();
+        this.actionId = data.actionId();
+    }
 }
 
 
