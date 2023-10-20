@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/action")
+@CrossOrigin(origins = "*")
 @Tag(name = "Ações", description = "Todos os endpoints de Ações")
 public class ActionController {
 
