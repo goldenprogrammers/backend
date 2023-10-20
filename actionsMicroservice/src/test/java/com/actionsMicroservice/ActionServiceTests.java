@@ -126,4 +126,11 @@ class ActionServiceTests {
                 () -> Assertions.assertEquals(existingAction.getStatus(), updatedAction.getStatus())
         );
     }
+
+    @Test
+    void activeAction(){
+        Action activeAction = new Action(1L, "Título", "Descrição", "www.google.com", null, ActionStatus.active, Instant.now(), Boolean.FALSE);
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(activeAction));
+        Assertions.assertEquals(true, actionService.activeAction(activeAction.getId()));
+    }
 }
