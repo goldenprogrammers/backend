@@ -28,7 +28,8 @@ public class Action {
     private String description;
 
     @Lob
-    private byte[] image;
+    @Column(columnDefinition = "MEDIUMBLOB", length = 2097152)
+    private String image;
 
     @Enumerated(EnumType.STRING)
     private ActionStatus status;
