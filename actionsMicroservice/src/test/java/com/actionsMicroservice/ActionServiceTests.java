@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.time.Instant;
+import java.util.Base64;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ class ActionServiceTests {
 
     @Test
     void createAction() {
-        ActionDTO actionDTO = new ActionDTO("título", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active);
+        ActionDTO actionDTO = new ActionDTO("título", "Descrição", "www.google.com.br", "imageRepresentation", ActionStatus.active);
         Action action = new Action(actionDTO);
         Mockito.when(mockRepository.save(action)).thenReturn(action);
         Assertions.assertEquals(action, actionService.createAction(actionDTO));
@@ -37,48 +38,58 @@ class ActionServiceTests {
 
     @Test
     void titleValidation() {
-        ActionDTO actionDTO = new ActionDTO("", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active);
+        ActionDTO actionDTO = new ActionDTO("", "Descrição", "www.google.com.br", "imageRepresentation", ActionStatus.active);
         Assertions.assertThrows(ActionCreationException.RequiredField.class, () -> actionService.createAction(actionDTO));
     }
 
     @Test
     void titleLengthValidation() {
-        ActionDTO actionDTO = new ActionDTO("Título".repeat(13) + "aaa", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active);
+        ActionDTO actionDTO = new ActionDTO("Título".repeat(13) + "aaa", "Descrição", "www.google.com.br", "imageRepresentation", ActionStatus.active);
         Assertions.assertThrows(ActionCreationException.TitleException.class, () -> actionService.createAction(actionDTO));
     }
 
     @Test
     void descriptionValidation() {
-        ActionDTO actionDTO = new ActionDTO("Título", "", "www.google.com.br", new byte[] { 12 }, ActionStatus.active);
+        ActionDTO actionDTO = new ActionDTO("Título", "", "www.google.com.br", "imageRepresentation", ActionStatus.active);
         Assertions.assertThrows(ActionCreationException.RequiredField.class, () -> actionService.createAction(actionDTO));
     }
 
     @Test
     void descriptionLengthValidation() {
-        ActionDTO actionDTO = new ActionDTO("Título", "Descrição".repeat(455) + "aa", "www.google.com.br", new byte[] { 12 }, ActionStatus.active);
+        ActionDTO actionDTO = new ActionDTO("Título", "Descrição".repeat(455) + "aa", "www.google.com.br", "imageRepresentation", ActionStatus.active);
         Assertions.assertThrows(ActionCreationException.DescriptionException.class, () -> actionService.createAction(actionDTO));
     }
 
     @Test
     void imageValidation() {
-        ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "www.google.com.br", new byte[] {}, ActionStatus.active);
+        ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "www.google.com.br", null, ActionStatus.active);
         Assertions.assertThrows(ActionCreationException.RequiredField.class, () -> actionService.createAction(actionDTO));
     }
 
     @Test
+    void imageSizeValidation() {
+        String image = "imageRepresentation";
+        while(Base64.getDecoder().decode(image).length < 2097152)
+            image += image;
+
+        ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "www.google.com.br", image, ActionStatus.active);
+        Assertions.assertThrows(ActionCreationException.ImageSizeException.class, () -> actionService.createAction(actionDTO));
+    }
+
+    @Test
     void formValidation() {
-        ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "", new byte[] { 12 }, ActionStatus.active);
+        ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "", "imageRepresentation", ActionStatus.active);
         Assertions.assertThrows(ActionCreationException.RequiredField.class, () -> actionService.createAction(actionDTO));
     }
     @Test
     void statusValidation() {
-        ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "www.google.com.br", new byte[] { 12 }, null);
+        ActionDTO actionDTO = new ActionDTO("Título", "Descrição", "www.google.com.br", "imageRepresentation", null);
         Assertions.assertThrows(ActionCreationException.RequiredField.class, () -> actionService.createAction(actionDTO));
     }
 
     @Test
     void findById() {
-        Action action = new Action((long) 1, "título", "Descrição", "www.google.com.br", new byte[] { 12 }, ActionStatus.active, Instant.now(), Boolean.FALSE);
+        Action action = new Action((long) 1, "título", "Descrição", "www.google.com.br", "imageRepresentation", ActionStatus.active, Instant.now(), Boolean.FALSE);
         Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(action));
         Assertions.assertEquals(action, actionService.getActionById(1));
     }

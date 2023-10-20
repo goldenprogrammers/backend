@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -36,8 +37,13 @@ public class ActionService {
         else if (data.description().length() > 4096)
             throw new ActionCreationException.DescriptionException();
 
-        if (data.image() == null || data.image().length == 0)
+        if (data.image() == null || data.image().isEmpty())
             throw new ActionCreationException.RequiredField("image");
+
+        byte[] decodedBytes = Base64.getDecoder().decode(data.image());
+        int sizeInBytes = decodedBytes.length;
+        if (sizeInBytes > 2 * 1024 * 1024)
+            throw new ActionCreationException.ImageSizeException();
 
         if (data.formLink() == null || data.formLink().isEmpty())
             throw new ActionCreationException.RequiredField("formLink");

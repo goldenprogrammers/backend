@@ -36,12 +36,12 @@ public class ActionController {
     @PostMapping
     @Operation(summary = "Criação de ações")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
-            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": [12, 43], \"status\": \"active\"}")
+            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}")
     }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ação criada com sucesso", content =  {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
-                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\", \"isDeleted\": \"false\"}")
+                                @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\", \"isDeleted\": \"false\"}")
                     })
             }),
             @ApiResponse(responseCode = "400", description = "Validação dos campos", content = {
@@ -50,6 +50,7 @@ public class ActionController {
                         @ExampleObject(name = "description validation", value = "{\"message\": \"O campo description é obrigatório.\"}"),
                         @ExampleObject(name = "form validation", value = "{\"message\": \"O campo formLink é obrigatório.\"}"),
                         @ExampleObject(name = "image validation", value = "{\"message\": \"O campo image é obrigatório.\"}"),
+                        @ExampleObject(name = "image size validation", value = "{\"message\": \"O tamanho da imagem deve ser de no máximo 2MB.\"}"),
                         @ExampleObject(name = "status validation", value = "{\"message\": \"O campo status é obrigatório.\"}"),
                         @ExampleObject(name = "title length validation", value = "{\"message\": \"O título pode ter no máximo 80 caracteres.\"}"),
                         @ExampleObject(name = "description length validation", value = "{\"message\": \"A descrição pode ter no máximo 4096 caracteres.\"}")
@@ -85,11 +86,8 @@ public class ActionController {
                     })
             })
     })
-    public ResponseEntity<Action> getActionById(
-            @Parameter(description = "id da ação que está sendo buscada", example = "1", content = {
-            @Content(mediaType = "number", schema = @Schema(implementation = Number.class))})
-            @PathVariable long id
-    ) {
+    public ResponseEntity<Action> getActionById(@Parameter(description = "id da ação que está sendo buscada", example = "1", content = { @Content(mediaType = "number", schema = @Schema(implementation = Number.class)) })
+            @PathVariable long id) {
         Action newAction = actionService.getActionById(id);
         return new ResponseEntity<>(newAction, HttpStatus.OK);
     }
@@ -179,11 +177,12 @@ public class ActionController {
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @PatchMapping("/{id}")
     @Transactional
     @Operation(summary = "Atualizar dados de uma ação")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
-            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"image\": [12, 43], \"status\": \"active\"}")
+            @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"image\": \"DCs=\", \"status\": \"active\"}")
     }))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ação atualizada com sucesso", content =  {
@@ -207,7 +206,9 @@ public class ActionController {
                     })
             })
     })
-    public ResponseEntity<Action> updateAction(@PathVariable Long id, @RequestBody ActionDTO data){
+    public ResponseEntity<Action> updateAction(@Parameter(description = "id da ação que está sendo alterada", example = "1", content = { @Content(mediaType = "number", schema = @Schema(implementation = Number.class)) })
+            @PathVariable long id,
+            @RequestBody ActionDTO data) {
         Action updatedAction = actionService.updateAction(id, data);
         return new ResponseEntity<>(updatedAction, HttpStatus.OK);
     }
@@ -228,10 +229,8 @@ public class ActionController {
                     })
             })
     })
-    public ResponseEntity<?> deleteAction(
-            @Parameter(description = "Id da ação que será excluída", example = "1", content = {
-                    @Content(mediaType = "number", schema = @Schema(implementation = Number.class))})
-            @PathVariable Long id){
+    public ResponseEntity<?> deleteAction(@Parameter(description = "Id da ação que será excluída", example = "1", content = { @Content(mediaType = "number", schema = @Schema(implementation = Number.class)) })
+            @PathVariable long id) {
         actionService.removeAction(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -255,7 +254,8 @@ public class ActionController {
                     })
             })
     })
-    public ResponseEntity<ActionStatusDTO> isAnActiveAction(@PathVariable Long id){
+    public ResponseEntity<ActionStatusDTO> isAnActiveAction(@Parameter(description = "id da ação que está sendo verificada", example = "1", content = { @Content(mediaType = "number", schema = @Schema(implementation = Number.class)) })
+            @PathVariable long id) {
         ActionStatusDTO isActive = new ActionStatusDTO(actionService.activeAction(id));
         return new ResponseEntity<>(isActive, HttpStatus.OK);
     }

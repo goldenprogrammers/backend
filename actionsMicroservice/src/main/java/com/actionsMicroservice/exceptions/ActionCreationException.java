@@ -22,4 +22,8 @@ public class ActionCreationException extends RuntimeException {
             super("A descrição pode ter no máximo 4096 caracteres.");
         }
     }
+
+    public static class ImageSizeException extends ActionCreationException {
+        public ImageSizeException() { super("O tamanho da imagem deve ser de no máximo 2MB."); }
+    }
 }
