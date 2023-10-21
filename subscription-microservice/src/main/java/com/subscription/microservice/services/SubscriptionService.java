@@ -5,6 +5,8 @@ import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import com.subscription.microservice.exceptions.SubscriptionCreationException;
 import com.subscription.microservice.repositories.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -57,6 +59,15 @@ public class SubscriptionService {
         return newSubscription;
     }
 
+    public Page<Subscription> getSubscriptionByAction(int page, int pageSize, Long actionId){
+        PageRequest pagination = this.getPagination(page, pageSize);
+        return this.repository.findAllByActionId(actionId, pagination);
+    }
+
+    public PageRequest getPagination(int page, int pageSize){
+        return PageRequest.of(page, pageSize);
+
+    }
     public String convertJwt(String authorization){
         // Divide o JWT em três partes com base no caractere de ponto (.)
         String[] parts = authorization.split("\\.");
