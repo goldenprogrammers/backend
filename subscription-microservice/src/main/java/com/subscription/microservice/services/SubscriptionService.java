@@ -1,6 +1,9 @@
 package com.subscription.microservice.services;
 
 import com.subscription.microservice.domain.subscription.Subscription;
+import com.subscription.microservice.domain.subscription.SubscriptionId;
+import com.subscription.microservice.domain.subscription.SubscriptionStatus;
+import com.subscription.microservice.dtos.SubscriptionDTO;
 import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import com.subscription.microservice.exceptions.SubscriptionCreationException;
 import com.subscription.microservice.repositories.SubscriptionRepository;
@@ -66,7 +69,31 @@ public class SubscriptionService {
 
     public PageRequest getPagination(int page, int pageSize){
         return PageRequest.of(page, pageSize);
+    }
 
+    public Subscription updateSubscription(SubscriptionIdDTO subscriptionId, SubscriptionDTO updatedSubscription){
+
+        Subscription oldSubscription = getSubscriptionByid(subscriptionId);
+
+        if (updatedSubscription.formReceived() == Boolean.TRUE) {
+            oldSubscription.setFormReceived(Boolean.TRUE);
+        }
+        if(updatedSubscription.formResponseApproved() == Boolean.TRUE){
+            oldSubscription.setFormResponseApproved(Boolean.TRUE);
+        }
+        if(updatedSubscription.status() != SubscriptionStatus.IN_PROGRESS){
+            oldSubscription.setStatus(updatedSubscription.status());
+        }
+        this.saveSubscription(oldSubscription);
+        return oldSubscription;
+    }
+
+    public Subscription getSubscriptionByid(SubscriptionIdDTO subscriptionId){
+        Optional<Subscription> subscription = this.repository.findByUserIdAndActionId(subscriptionId.userId(), subscriptionId.actionId());
+        if(subscription.isPresent()){
+            return subscription.get();
+        }
+        throw new NoSuchElementException("Inscrição");
     }
     public String convertJwt(String authorization){
         // Divide o JWT em três partes com base no caractere de ponto (.)

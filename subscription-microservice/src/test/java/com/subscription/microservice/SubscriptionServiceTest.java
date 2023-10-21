@@ -1,5 +1,7 @@
 package com.subscription.microservice;
 import com.subscription.microservice.domain.subscription.Subscription;
+import com.subscription.microservice.domain.subscription.SubscriptionStatus;
+import com.subscription.microservice.dtos.SubscriptionDTO;
 import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import com.subscription.microservice.exceptions.SubscriptionCreationException;
 import com.subscription.microservice.repositories.SubscriptionRepository;
@@ -55,4 +57,34 @@ public class SubscriptionServiceTest {
         assertEquals(1L, createdSubscription.getActionId());
 
     }
+
+    @Test
+    public void testUpdateSubscription() {
+        // Dados de exemplo
+        SubscriptionIdDTO subscriptionId = new SubscriptionIdDTO("userId123", 1L);
+        SubscriptionDTO updatedSubscription = new SubscriptionDTO("userId123", 1L, true, true, SubscriptionStatus.APPROVED);
+
+        Subscription oldSubscription = new Subscription();
+        oldSubscription.setUserId("userId123");
+        oldSubscription.setActionId(1L);
+        oldSubscription.setFormReceived(false);
+        oldSubscription.setFormResponseApproved(false);
+        oldSubscription.setStatus(SubscriptionStatus.IN_PROGRESS);
+
+        // Simule o comportamento do repositório
+        when(mockRepository.findByUserIdAndActionId(subscriptionId.userId(), subscriptionId.actionId()))
+                .thenReturn(Optional.of(oldSubscription));
+
+        // Execute o método a ser testado
+        Subscription result = subscriptionService.updateSubscription(subscriptionId, updatedSubscription);
+
+        // Verifique se o método do repositório foi chamado corretamente
+        verify(mockRepository, times(1)).findByUserIdAndActionId(subscriptionId.userId(), subscriptionId.actionId());
+
+        // Verifique se o resultado é o esperado
+        assertEquals(updatedSubscription.formReceived(), result.getFormReceived());
+        assertEquals(updatedSubscription.formResponseApproved(), result.getFormResponseApproved());
+        assertEquals(updatedSubscription.status(), result.getStatus());
+    }
 }
+

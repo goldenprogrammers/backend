@@ -3,6 +3,7 @@ package com.subscription.microservice.controllers;
 import com.subscription.microservice.domain.subscription.Subscription;
 import com.subscription.microservice.dtos.ExceptionDTO;
 import com.subscription.microservice.dtos.GetWithPaginationDTO;
+import com.subscription.microservice.dtos.SubscriptionDTO;
 import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import com.subscription.microservice.services.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.*;
@@ -102,4 +104,39 @@ public class SubscriptionController {
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}")
+    @Transactional
+    @Operation(summary = "Atualizar o processo de uma inscrição")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
+            @ExampleObject(value = "{\"userId\": \"1\", \"actionId\": \"1\", \"formReceived\": \"false\", \"formResponseApproved\": \"false\", \"status\": \"IN_PROGRESS\"}")
+    }))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ação atualizada com sucesso", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Subscription.class), examples = {
+                            @ExampleObject(value = "{\"id\": 1, \"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\" , \"isDeleted\": \"false\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "404", description = "Ação não encontrada", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Ação não encontrada.\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Erro interno no servidor.\"}")
+                    })
+            })
+    })
+    public ResponseEntity<Subscription> updateSubscription(
+            @Parameter(description = "id da inscrição que está sendo atualizada", example = "1", content = {
+                    @Content(mediaType = "number", schema = @Schema(implementation = Number.class))})
+            @PathVariable long id,
+            @RequestBody SubscriptionDTO data){
+        SubscriptionIdDTO subs = new SubscriptionIdDTO(data.userId(), id);
+        Subscription updatedSubscription = subscriptionService.updateSubscription(subs, data);
+        return new ResponseEntity<>(updatedSubscription, HttpStatus.OK);
+    }
+
+
 }
