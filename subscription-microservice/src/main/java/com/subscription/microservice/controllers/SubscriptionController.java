@@ -2,6 +2,7 @@ package com.subscription.microservice.controllers;
 
 import com.subscription.microservice.domain.subscription.Subscription;
 import com.subscription.microservice.dtos.ExceptionDTO;
+import com.subscription.microservice.dtos.GetWithPaginationDTO;
 import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import com.subscription.microservice.services.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,9 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.*;
 
 
 @RestController
@@ -60,5 +64,42 @@ public class SubscriptionController {
         SubscriptionIdDTO newSubscriptionDTO = new SubscriptionIdDTO(authorizationH, actionId);
         Subscription newSubscription = subscriptionService.createSubscription(newSubscriptionDTO);
         return new ResponseEntity<>(newSubscription, HttpStatus.CREATED);
+    }
+    @GetMapping("/{actionId}")
+    @Operation(summary = "Buscar todos os usuários inscritos pela ação")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso retornando pelo menos uma ação", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
+                            @ExampleObject(value = "{\"userId\": \"1\", \"actionId\": \"1\", \"formReceived\": \"true\", \"formResponseApproved\": \"true\", \"status\": \"IN_PROGRESS\"}")
+                    })
+            }),
+            @ApiResponse(responseCode = "204", description = "Busca realizada com sucesso, mas sem nenhum retorno", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"message\": \"Erro interno no servidor.\"}")
+                    })
+            })
+    })
+    public ResponseEntity<GetWithPaginationDTO> getSubscriptionByAction(
+            @Parameter(description = "Quantidade de ações retornadas por página", example = "25", content = {
+                    @Content(mediaType = "number", schema = @Schema(implementation = Number.class))
+            })
+            @RequestParam(required = false, defaultValue = "25") int pageSize,
+            @Parameter(description = "Página a ser retornada", example = "1", content = {
+                    @Content(mediaType = "number", schema = @Schema(implementation = Number.class))
+            })
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @PathVariable long actionId
+    ){
+        Page<Subscription> subscription = subscriptionService.getSubscriptionByAction(page - 1, pageSize, actionId);
+        if(subscription.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        GetWithPaginationDTO response = new GetWithPaginationDTO(
+                subscription.getContent(),
+                subscription.getTotalPages(),
+                subscription.getTotalElements(),
+                subscription.getPageable().getPageNumber() + 1
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
