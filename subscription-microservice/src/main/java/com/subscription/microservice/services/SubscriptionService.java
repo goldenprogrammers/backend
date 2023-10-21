@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -40,15 +42,13 @@ public class SubscriptionService {
         if(searchedSubcription.isPresent()){
             throw new SubscriptionCreationException.userAlreadyRegistered();
         }
-
-        ResponseEntity<Map> responseAction = restTemplate.getForEntity("http://localhost:8080/action/isactive/"+ subscription.actionId(), Map.class);
-
         try {
+            ResponseEntity<Map> responseAction = restTemplate.getForEntity("http://localhost:8080/action/isactive/" + subscription.actionId(), Map.class);
             if (responseAction.getStatusCode() == HttpStatus.OK && responseAction.getBody().get("isActive") == Boolean.FALSE) {
                 throw new SubscriptionCreationException.isActiveException();
             }
-        }catch(NullPointerException exception){
-            throw new NullPointerException("Ocorreu um erro na comunicação com ação");
+        }catch (HttpClientErrorException exc){
+            throw new NoSuchElementException("Ação");
         }
 
         SubscriptionIdDTO updateSubscription = new SubscriptionIdDTO(subToken, subscription.actionId());
