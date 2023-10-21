@@ -28,7 +28,8 @@ public class Action {
     private String description;
 
     @Lob
-    @Column(columnDefinition = "MEDIUMBLOB", length = 2621440)
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "LONGBLOB")
     private String image;
 
     @Enumerated(EnumType.STRING)
