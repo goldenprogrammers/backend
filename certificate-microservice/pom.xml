@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.certificate-microservice</groupId>
-	<artifactId>certificateMicroservice</artifactId>
+	<artifactId>certificate-microservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>certificateMicroservice</name>
 	<description>Demo project for Spring Boot</description>
