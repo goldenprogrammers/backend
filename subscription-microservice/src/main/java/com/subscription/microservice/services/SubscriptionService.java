@@ -1,12 +1,14 @@
 package com.subscription.microservice.services;
 
 import com.subscription.microservice.domain.subscription.Subscription;
-import com.subscription.microservice.domain.subscription.SubscriptionId;
 import com.subscription.microservice.domain.subscription.SubscriptionStatus;
+import com.subscription.microservice.domain.subscription.User;
+import com.subscription.microservice.dtos.CompleteSubscriptionDTO;
 import com.subscription.microservice.dtos.SubscriptionDTO;
 import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import com.subscription.microservice.exceptions.SubscriptionCreationException;
 import com.subscription.microservice.repositories.SubscriptionRepository;
+import com.subscription.microservice.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +30,9 @@ public class SubscriptionService {
     private SubscriptionRepository repository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     public void saveSubscription(Subscription subscription){
@@ -47,7 +52,6 @@ public class SubscriptionService {
         if(searchedSubcription.isPresent()){
             throw new SubscriptionCreationException.userAlreadyRegistered();
         }
-        System.out.println(subscription.actionId());
         try {
             ResponseEntity<Map> responseAction = restTemplate.getForEntity("https://actions-forcaesperanca.up.railway.app/action/isactive/" + subscription.actionId(), Map.class);
             if (responseAction.getStatusCode() == HttpStatus.OK && responseAction.getBody().get("isActive") == Boolean.FALSE) {
@@ -63,9 +67,29 @@ public class SubscriptionService {
         return newSubscription;
     }
 
-    public Page<Subscription> getSubscriptionByAction(int page, int pageSize, Long actionId){
+    public Page<CompleteSubscriptionDTO> getSubscriptionByAction(int page, int pageSize, Long actionId){
         PageRequest pagination = this.getPagination(page, pageSize);
-        return this.repository.findAllByActionId(actionId, pagination);
+        Page<Subscription> subscriptionPage = this.repository.findAllByActionId(actionId, pagination);
+
+        Page<CompleteSubscriptionDTO> completeSubscriptionPage = subscriptionPage.map(subscription -> {
+            User user = this.userRepository.findById(subscription.getUserId())
+                    .orElseThrow(() -> new NoSuchElementException("Usuário"));
+
+            return new CompleteSubscriptionDTO(
+                    user.getId(),
+                    subscription.getActionId(),
+                    user.getNome(),
+                    user.getEmail(),
+                    subscription.getFormReceived(),
+                    subscription.getFormResponseApproved(),
+                    subscription.getStatus()
+            );
+        });
+
+        return completeSubscriptionPage;
+
+
+
     }
 
     public PageRequest getPagination(int page, int pageSize){
