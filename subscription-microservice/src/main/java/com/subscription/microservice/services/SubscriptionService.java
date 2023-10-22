@@ -47,8 +47,9 @@ public class SubscriptionService {
         if(searchedSubcription.isPresent()){
             throw new SubscriptionCreationException.userAlreadyRegistered();
         }
+        System.out.println(subscription.actionId());
         try {
-            ResponseEntity<Map> responseAction = restTemplate.getForEntity("http://localhost:8080/action/isactive/" + subscription.actionId(), Map.class);
+            ResponseEntity<Map> responseAction = restTemplate.getForEntity("https://actions-forcaesperanca.up.railway.app/action/isactive/" + subscription.actionId(), Map.class);
             if (responseAction.getStatusCode() == HttpStatus.OK && responseAction.getBody().get("isActive") == Boolean.FALSE) {
                 throw new SubscriptionCreationException.isActiveException();
             }
