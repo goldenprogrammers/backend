@@ -47,7 +47,7 @@ public class SubscriptionServiceTest {
         when(mockRepository.findByUserIdAndActionId("c09f3e60-8004-4a18-b93b-9871bd47b71b", 1L)).thenReturn(Optional.empty());
 
         ResponseEntity<Map> responseEntity = new ResponseEntity<>(Collections.singletonMap("isActive", true), HttpStatus.OK);
-        when(restTemplate.getForEntity(eq("http://localhost:8080/action/isactive/1"), eq(Map.class))).thenReturn(responseEntity);
+        when(restTemplate.getForEntity(eq("https://actions-forcaesperanca.up.railway.app/action/isactive/1"), eq(Map.class))).thenReturn(responseEntity);
 
         Subscription createdSubscription = subscriptionService.createSubscription(subscriptionIdDTO);
 
