@@ -15,9 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.ParseException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -54,10 +54,13 @@ public class SubscriptionService {
         }
         try {
             ResponseEntity<Map> responseAction = restTemplate.getForEntity("https://actions-forcaesperanca.up.railway.app/action/isactive/" + subscription.actionId(), Map.class);
-            if (responseAction.getStatusCode() == HttpStatus.OK && responseAction.getBody().get("isActive") == Boolean.FALSE) {
-                throw new SubscriptionCreationException.isActiveException();
+            if (responseAction.getStatusCode() == HttpStatus.OK){
+                Map<String, Object> responseBody = responseAction.getBody();
+                if(responseBody != null && responseBody.get("isActive") == Boolean.FALSE){
+                    throw new SubscriptionCreationException.isActiveException();
+                }
             }
-        }catch (HttpClientErrorException exc){
+        }catch (NullPointerException exc){
             throw new NoSuchElementException("Ação");
         }
 
@@ -142,7 +145,7 @@ public class SubscriptionService {
                 sub = (String) payloadMap.get("sub");
 
             } catch (org.json.simple.parser.ParseException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Erro na captura dos dados do usuário");
             }
         }
         return sub;
