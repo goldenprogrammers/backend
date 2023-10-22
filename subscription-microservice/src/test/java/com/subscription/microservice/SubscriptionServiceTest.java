@@ -1,10 +1,13 @@
 package com.subscription.microservice;
 import com.subscription.microservice.domain.subscription.Subscription;
 import com.subscription.microservice.domain.subscription.SubscriptionStatus;
+import com.subscription.microservice.domain.subscription.User;
+import com.subscription.microservice.dtos.CompleteSubscriptionDTO;
 import com.subscription.microservice.dtos.SubscriptionDTO;
 import com.subscription.microservice.dtos.SubscriptionIdDTO;
 import com.subscription.microservice.exceptions.SubscriptionCreationException;
 import com.subscription.microservice.repositories.SubscriptionRepository;
+import com.subscription.microservice.repositories.UserRepository;
 import com.subscription.microservice.services.SubscriptionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,6 +36,8 @@ public class SubscriptionServiceTest {
     @Mock
     private SubscriptionRepository mockRepository;
 
+    @Mock
+    private UserRepository mockUserRepository;
     @Mock
     private RestTemplate restTemplate;
 
@@ -56,6 +62,47 @@ public class SubscriptionServiceTest {
         assertEquals("c09f3e60-8004-4a18-b93b-9871bd47b71b", createdSubscription.getUserId());
         assertEquals(1L, createdSubscription.getActionId());
 
+    }
+
+    @Test
+    public void testGetSubscriptionByAction() {
+        // Dados de exemplo
+        int page = 1;
+        int pageSize = 10;
+        Long actionId = 4L;
+
+        // Simule a lista de subscriptions retornada pelo repositório
+        List<Subscription> subscriptionList = createSampleSubscriptions();
+
+        // Simule uma página de resultados
+        Page<Subscription> pageOfSubscriptions = new PageImpl<>(subscriptionList);
+
+        // Simule a busca no repositório
+        when(mockRepository.findAllByActionId(actionId, PageRequest.of(page, pageSize))).thenReturn(pageOfSubscriptions);
+
+        // Simule a busca de usuários pelo ID
+        when(mockUserRepository.findById("Id")).thenReturn(Optional.of(new User("Id", "User 1", "user1@example.com")));
+
+        // Chame a função que está sendo testada
+        Page<CompleteSubscriptionDTO> result = subscriptionService.getSubscriptionByAction(page, pageSize, actionId);
+
+        // Verifique se a página de resultados não está vazia
+        assertFalse(result.isEmpty());
+
+        // Verifique se o conteúdo da primeira entrada na página está correto
+        CompleteSubscriptionDTO firstEntry = result.getContent().get(0);
+        assertEquals("Id", firstEntry.id());
+        assertEquals(actionId, firstEntry.actionId());
+        assertEquals("User 1", firstEntry.nome());
+        assertEquals("user1@example.com", firstEntry.email());
+        // Adicione mais verificações conforme necessário
+    }
+
+    private List<Subscription> createSampleSubscriptions() {
+        List<Subscription> subscriptions = new ArrayList<>();
+        subscriptions.add(new Subscription("Id", 4L, true, true, SubscriptionStatus.IN_PROGRESS));
+        // Adicione mais assinaturas de amostra conforme necessário
+        return subscriptions;
     }
 
     @Test
