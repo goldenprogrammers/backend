@@ -1,10 +1,7 @@
 package com.subscription.microservice.controllers;
 
 import com.subscription.microservice.domain.subscription.Subscription;
-import com.subscription.microservice.dtos.ExceptionDTO;
-import com.subscription.microservice.dtos.GetWithPaginationDTO;
-import com.subscription.microservice.dtos.SubscriptionDTO;
-import com.subscription.microservice.dtos.SubscriptionIdDTO;
+import com.subscription.microservice.dtos.*;
 import com.subscription.microservice.services.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -71,8 +68,8 @@ public class SubscriptionController {
     @Operation(summary = "Buscar todos os usuários inscritos pela ação")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso retornando pelo menos uma ação", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = Action.class), examples = {
-                            @ExampleObject(value = "{\"userId\": \"1\", \"actionId\": \"1\", \"formReceived\": \"true\", \"formResponseApproved\": \"true\", \"status\": \"IN_PROGRESS\"}")
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CompleteSubscriptionDTO.class), examples = {
+                            @ExampleObject(value = "{\"id\": \"1\", \"actionId\": \"1\", \"nome\": \"Murilo Matias\", \"email\": \"murilo@gmail.com\",\"formReceived\": \"true\", \"formResponseApproved\": \"true\", \"status\": \"IN_PROGRESS\"}")
                     })
             }),
             @ApiResponse(responseCode = "204", description = "Busca realizada com sucesso, mas sem nenhum retorno", content = @Content),
@@ -93,14 +90,14 @@ public class SubscriptionController {
             @RequestParam(required = false, defaultValue = "1") int page,
             @PathVariable long actionId
     ){
-        Page<Subscription> subscription = subscriptionService.getSubscriptionByAction(page - 1, pageSize, actionId);
-        if(subscription.isEmpty())
+        Page<CompleteSubscriptionDTO> completeSubscription = subscriptionService.getSubscriptionByAction(page - 1, pageSize, actionId);
+        if(completeSubscription.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         GetWithPaginationDTO response = new GetWithPaginationDTO(
-                subscription.getContent(),
-                subscription.getTotalPages(),
-                subscription.getTotalElements(),
-                subscription.getPageable().getPageNumber() + 1
+                completeSubscription.getContent(),
+                completeSubscription.getTotalPages(),
+                completeSubscription.getTotalElements(),
+                completeSubscription.getPageable().getPageNumber() + 1
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

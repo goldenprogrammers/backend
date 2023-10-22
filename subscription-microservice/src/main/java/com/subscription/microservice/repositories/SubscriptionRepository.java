@@ -12,7 +12,6 @@ import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, SubscriptionId>{
     Optional<Subscription> findByUserIdAndActionId(String userId, Long actionId);
-
     Page<Subscription> findAllByActionId(Long id, Pageable pageable);
-
+    Subscription findAllSubscriotionByActionId(Long id);
 }
