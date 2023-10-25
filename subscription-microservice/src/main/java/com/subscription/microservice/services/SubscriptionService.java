@@ -12,8 +12,7 @@ import com.subscription.microservice.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -53,14 +52,18 @@ public class SubscriptionService {
             throw new SubscriptionCreationException.userAlreadyRegistered();
         }
         try {
-            ResponseEntity<Map> responseAction = restTemplate.getForEntity("https://actions-forcaesperanca.up.railway.app/action/isactive/" + subscription.actionId(), Map.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", subscription.userId());
+            HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+            ResponseEntity<Map> responseAction = restTemplate.exchange("https://actions-forcaesperanca.up.railway.app/action/isactive/" + subscription.actionId(), HttpMethod.GET, requestEntity, Map.class);
+
             if (responseAction.getStatusCode() == HttpStatus.OK){
                 Map<String, Object> responseBody = responseAction.getBody();
                 if(responseBody != null && responseBody.get("isActive") == Boolean.FALSE){
                     throw new SubscriptionCreationException.isActiveException();
                 }
             }
-        }catch (NullPointerException exc){
+        } catch (NullPointerException exc){
             throw new NoSuchElementException("Ação");
         }
 
@@ -90,9 +93,6 @@ public class SubscriptionService {
         });
 
         return completeSubscriptionPage;
-
-
-
     }
 
     public PageRequest getPagination(int page, int pageSize){
@@ -123,6 +123,7 @@ public class SubscriptionService {
         }
         throw new NoSuchElementException("Inscrição");
     }
+
     public String convertJwt(String authorization){
         // Divide o JWT em três partes com base no caractere de ponto (.)
         String[] parts = authorization.split("\\.");
@@ -150,7 +151,4 @@ public class SubscriptionService {
         }
         return sub;
     }
-
-
-
 }
