@@ -1,4 +1,5 @@
 package com.subscription.microservice;
+
 import com.subscription.microservice.domain.subscription.Subscription;
 import com.subscription.microservice.domain.subscription.SubscriptionStatus;
 import com.subscription.microservice.domain.subscription.User;
