@@ -1,15 +1,17 @@
 package com.certificate.microservice.services;
 
 import com.certificate.microservice.dtos.AcessToken;
+import com.certificate.microservice.dtos.DocumentData;
+import com.certificate.microservice.dtos.DocumentRequest;
+import com.certificate.microservice.dtos.SignDocumentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -48,6 +50,52 @@ public class CertificateService {
         }else{
 //            TODO: Fazer o tratamento de erro
            throw new RuntimeException("Erro na autenticação");
+        }
+    }
+
+    public String addDocument(DocumentRequest documentRequest, String bearerToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("x-tenant", "6cbe14eb-fae5-4d47-b697-9128d512649e");
+        headers.set("Authorization", "Bearer "+bearerToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String idProcess = "b96f96ac-6324-419e-bb15-227872843bd4";
+
+        HttpEntity<DocumentRequest> entity = new HttpEntity<>(documentRequest, headers);
+
+        String url = "https://esign-api-pprd.portaldedocumentos.com.br/processes/" + idProcess + "/documents";
+
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Map responseBody = response.getBody();
+                return responseBody.get("id").toString();
+            } else {
+                // Tratamento de erros aqui
+                throw new RuntimeException("Erro no Id do documento");
+            }
+        } catch (HttpClientErrorException.Unauthorized e) {
+            // Tratamento de erro de autenticação (401 Unauthorized)
+            throw new RuntimeException("Erro de autenticação: " + e.getMessage());
+        }
+    }
+
+    public SignDocumentDTO uploadDocument(byte[] document, String idDocument, String bearerToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("x-tenant", "6cbe14eb-fae5-4d47-b697-9128d512649e");
+        headers.set("Authorization", "Bearer " + bearerToken);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        String idProcess = "b96f96ac-6324-419e-bb15-227872843bd4";
+
+        HttpEntity<byte[]> requestEntity = new HttpEntity<>(document, headers);
+        String url = "https://esign-api-pprd.portaldedocumentos.com.br/processes/" + idProcess + "/documents/" + idDocument;
+
+        ResponseEntity<SignDocumentDTO> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, SignDocumentDTO.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Erro no envio do documento para assinatura");
         }
     }
 }
