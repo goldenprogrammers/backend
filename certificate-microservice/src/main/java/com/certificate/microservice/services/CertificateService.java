@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 public class CertificateService {
@@ -46,9 +47,9 @@ public class CertificateService {
 
         if(response.getStatusCode().is2xxSuccessful()){
             Map responseBody = response.getBody();
+            assert responseBody != null;
             return responseBody.get("access_token").toString();
         }else{
-//            TODO: Fazer o tratamento de erro
            throw new RuntimeException("Erro na autenticação");
         }
     }
@@ -69,14 +70,13 @@ public class CertificateService {
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 Map responseBody = response.getBody();
+                assert responseBody != null;
                 return responseBody.get("id").toString();
             } else {
-                // Tratamento de erros aqui
                 throw new RuntimeException("Erro no Id do documento");
             }
-        } catch (HttpClientErrorException.Unauthorized e) {
-            // Tratamento de erro de autenticação (401 Unauthorized)
-            throw new RuntimeException("Erro de autenticação: " + e.getMessage());
+        } catch (NullPointerException exc) {
+            throw new NoSuchElementException("Processo");
         }
     }
 
