@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/action")
 @CrossOrigin(origins = "*")
+@PreAuthorize("hasAnyRole('admin','user')")
 @Tag(name = "Ações", description = "Todos os endpoints de Ações")
 public class ActionController {
 
@@ -34,6 +36,8 @@ public class ActionController {
     private ActionService actionService;
 
     @PostMapping
+    @Transactional
+    @PreAuthorize("hasRole('admin')")
     @Operation(summary = "Criação de ações")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
             @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"formLink\": \"www.formLink.com\", \"image\": \"DCs=\", \"status\": \"active\"}")
@@ -180,6 +184,7 @@ public class ActionController {
 
     @PatchMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasRole('admin')")
     @Operation(summary = "Atualizar dados de uma ação")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(mediaType = "application/json", examples = {
             @ExampleObject(value = "{\"title\": \"título\", \"description\": \"descrição\", \"image\": \"DCs=\", \"status\": \"active\"}")
@@ -215,6 +220,7 @@ public class ActionController {
 
     @DeleteMapping("/{id}")
     @Transactional
+    @PreAuthorize("hasRole('admin')")
     @Operation(summary = "Deletar ações")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Ação excluída com sucesso", content = @Content),
